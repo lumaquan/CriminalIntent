@@ -17,14 +17,10 @@ public class CrimeListFragment extends Fragment implements CrimeAdapter.OnItemCl
     private static final String CRIME_POSITION_KEY = "crime_position_key";
     private RecyclerView crimeList;
     private CrimeAdapter crimeAdapter;
-    private int crimePositionSelected;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            crimePositionSelected = savedInstanceState.getInt(CRIME_POSITION_KEY);
-        }
     }
 
     @Nullable
@@ -54,22 +50,15 @@ public class CrimeListFragment extends Fragment implements CrimeAdapter.OnItemCl
             crimeAdapter = new CrimeAdapter(crimeLab.getCrimes(), this);
             crimeList.setAdapter(crimeAdapter);
         } else {
-            crimeAdapter.notifyItemChanged(crimePositionSelected);
-            crimeList.scrollToPosition(crimePositionSelected);
+            crimeAdapter.notifyDataSetChanged();
         }
     }
 
     @Override
-    public void onItemClick(UUID uuid, int position) {
-        crimePositionSelected = position;
-        startActivity(CrimeActivity.newIntent(getActivity(), uuid));
+    public void onItemClick(UUID uuid ){
+        startActivity(CrimePagerActivity.newIntent(getActivity(), uuid));
     }
 
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt(CRIME_POSITION_KEY, crimePositionSelected);
-    }
 
 
 }

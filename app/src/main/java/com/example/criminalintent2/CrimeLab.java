@@ -22,7 +22,7 @@ public class CrimeLab {
 
     private CrimeLab(Context context) {
         mCrimes = new HashMap<>();
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 30; i++) {
             Crime crime = new Crime();
             crime.setTitle("CRIME # " + i);
             crime.setSolved(i % 2 == 0);

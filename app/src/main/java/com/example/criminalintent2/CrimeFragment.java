@@ -3,7 +3,6 @@ package com.example.criminalintent2;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -14,9 +13,11 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 
+import com.example.criminalintent2.Lifecycle.LoggingLifecycleFragment;
+
 import java.util.UUID;
 
-public class CrimeFragment extends Fragment {
+public class CrimeFragment extends LoggingLifecycleFragment {
     private Crime mCrime;
     private EditText titleField;
     private CheckBox solvedCheckBox;
@@ -47,7 +48,7 @@ public class CrimeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_crime, container, false);
 
         titleField = view.findViewById(R.id.crime_title);

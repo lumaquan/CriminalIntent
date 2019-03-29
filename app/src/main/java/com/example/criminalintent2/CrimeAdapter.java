@@ -20,7 +20,7 @@ public class CrimeAdapter extends RecyclerView.Adapter<CrimeAdapter.CrimeHolder>
     private OnItemClickedListener listener;
 
     interface OnItemClickedListener {
-        void onItemClick(UUID uuid, int position);
+        void onItemClick(UUID uuid);
     }
 
     public CrimeAdapter(List<Crime> mCrimes, OnItemClickedListener listener) {
@@ -71,7 +71,7 @@ public class CrimeAdapter extends RecyclerView.Adapter<CrimeAdapter.CrimeHolder>
         @Override
         public void onClick(View v) {
             if (listener != null) {
-                listener.onItemClick(mCrime.getId(), getAdapterPosition());
+                listener.onItemClick(mCrime.getId());
             }
         }
     }
