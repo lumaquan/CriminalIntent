@@ -14,7 +14,6 @@ import java.util.UUID;
 
 public class CrimeListFragment extends Fragment implements CrimeAdapter.OnItemClickedListener {
 
-    private static final String CRIME_POSITION_KEY = "crime_position_key";
     private RecyclerView crimeList;
     private CrimeAdapter crimeAdapter;
 
@@ -55,11 +54,8 @@ public class CrimeListFragment extends Fragment implements CrimeAdapter.OnItemCl
     }
 
     @Override
-    public void onItemClick(UUID uuid ){
+    public void onItemClick(UUID uuid) {
         startActivity(CrimePagerActivity.newIntent(getActivity(), uuid));
     }
-
-
-
 }
 

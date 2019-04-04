@@ -1,9 +1,7 @@
 package com.example.criminalintent2;
 
-import android.animation.ArgbEvaluator;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.DisplayMetrics;
@@ -21,8 +19,6 @@ public class CrimePagerActivity extends LoggingLifecycleActivity {
     private ViewPager mCrimeViewPager;
     private CrimePageAdapter crimePageAdapter;
     private List<Crime> mCrimes;
-    Integer[] colors = {Color.GREEN, Color.BLUE, Color.RED};
-    ArgbEvaluator argbEvaluator = new ArgbEvaluator();
 
     public static Intent newIntent(Context context, UUID uuid) {
         Intent intent = new Intent(context, CrimePagerActivity.class);
@@ -36,17 +32,17 @@ public class CrimePagerActivity extends LoggingLifecycleActivity {
         setContentView(R.layout.activity_crime_pager);
         mCrimeViewPager = findViewById(R.id.crime_view_pager);
         mCrimes = CrimeLab.get(this).getCrimes();
+        setupViewPager();
+    }
 
+    private void setupViewPager() {
         crimePageAdapter = new CrimePageAdapter(getSupportFragmentManager(), mCrimes);
         mCrimeViewPager.setAdapter(crimePageAdapter);
         mCrimeViewPager.setClipToPadding(false);
         mCrimeViewPager.setPadding(dpToPx(20), 0, dpToPx(20), 0);
         mCrimeViewPager.setPageTransformer(true, new ZoomOutTransformation());
-
         UUID uuid = (UUID) getIntent().getSerializableExtra(CRIME_ID_EXTRA);
-        for (int i = 0; i < mCrimes.size(); i++) {
-            if (mCrimes.get(i).getId().equals(uuid)) mCrimeViewPager.setCurrentItem(i);
-        }
+        mCrimeViewPager.setCurrentItem(CrimeLab.get(this).position(uuid));
     }
 
     public int dpToPx(int dp) {
@@ -58,7 +54,6 @@ public class CrimePagerActivity extends LoggingLifecycleActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         return true;
-
     }
 
     @Override

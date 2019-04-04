@@ -37,4 +37,8 @@ public class CrimeLab {
     public Crime getCrimeUUID(UUID id) {
         return mCrimes.get(id);
     }
+
+    public int position(UUID id) {
+        return getCrimes().indexOf(getCrimeUUID(id));
+    }
 }
