@@ -22,12 +22,6 @@ public class CrimeLab {
 
     private CrimeLab(Context context) {
         mCrimes = new HashMap<>();
-        for (int i = 0; i < 30; i++) {
-            Crime crime = new Crime();
-            crime.setTitle("CRIME # " + i);
-            crime.setSolved(i % 2 == 0);
-            mCrimes.put(crime.getId(), crime);
-        }
     }
 
     public List<Crime> getCrimes() {
@@ -36,6 +30,10 @@ public class CrimeLab {
 
     public Crime getCrimeUUID(UUID id) {
         return mCrimes.get(id);
+    }
+
+    public void addCrime(Crime c) {
+        mCrimes.put(c.getId(), c);
     }
 
     public int position(UUID id) {

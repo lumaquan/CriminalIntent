@@ -8,6 +8,8 @@ import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -110,4 +112,6 @@ public class CrimeFragment extends LoggingLifecycleFragment {
             dateButton.setText(mCrime.getDate().toString());
         }
     }
+
+
 }

@@ -90,5 +90,4 @@ public class CrimePagerActivity extends LoggingLifecycleActivity {
         }
     }
 
-
 }

@@ -246,12 +246,12 @@ public class LoggingLifecycleActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         beforeFather(ON_OPTIONS_ITEM_SELECTED);
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
-                Toast.makeText(this, "HOME", Toast.LENGTH_SHORT).show();
-                return true;
-        }
+//        switch (item.getItemId()) {
+//            case android.R.id.home:
+//                NavUtils.navigateUpFromSameTask(this);
+//                Toast.makeText(this, "HOME", Toast.LENGTH_SHORT).show();
+//                return true;
+//        }
         return super.onOptionsItemSelected(item);
     }
 
