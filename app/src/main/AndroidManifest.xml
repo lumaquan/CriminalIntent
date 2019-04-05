@@ -13,7 +13,9 @@
             android:name=".CrimePagerActivity"
             android:parentActivityName=".CrimeListActivity">>
         </activity>
-        <activity android:name=".CrimeListActivity">
+        <activity android:name=".CrimeListActivity"
+            android:launchMode="singleTop"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -10,6 +10,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -56,6 +57,7 @@ public class CrimeFragment extends LoggingLifecycleFragment {
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_crime, container, false);
+        setHasOptionsMenu(true);
 
         titleField = view.findViewById(R.id.crime_title);
         titleField.setText(mCrime.getTitle());
@@ -113,5 +115,23 @@ public class CrimeFragment extends LoggingLifecycleFragment {
         }
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
+        menuInflater.inflate(R.menu.fragment_crime, menu);
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_delete:
+                deleteContact();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void deleteContact() {
+        CrimeLab.get(getActivity()).deleteCrime(mCrime.getId());
+        getActivity().finish();
+    }
 }

@@ -32,6 +32,10 @@ public class CrimeLab {
         return mCrimes.get(id);
     }
 
+    public void deleteCrime(UUID id) {
+        mCrimes.remove(id);
+    }
+
     public void addCrime(Crime c) {
         mCrimes.put(c.getId(), c);
     }
