@@ -43,7 +43,8 @@ public class CrimePagerActivity extends LoggingLifecycleActivity {
         mCrimeViewPager.setPadding(dpToPx(20), 0, dpToPx(20), 0);
         mCrimeViewPager.setPageTransformer(true, new ZoomOutTransformation());
         UUID uuid = (UUID) getIntent().getSerializableExtra(CRIME_ID_EXTRA);
-        mCrimeViewPager.setCurrentItem(CrimeLab.get(this).position(uuid));
+        Crime crime = CrimeLab.get(this).getCrimeUUID(uuid);
+        mCrimeViewPager.setCurrentItem(mCrimes.indexOf(crime));
     }
 
     public int dpToPx(int dp) {

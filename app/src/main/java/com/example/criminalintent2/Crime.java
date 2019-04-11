@@ -10,7 +10,11 @@ public class Crime {
     private boolean isSolved;
 
     public Crime() {
-        id = UUID.randomUUID();
+        this(UUID.randomUUID());
+    }
+
+    public Crime(UUID id) {
+        this.id = id;
         date = new Date();
     }
 
@@ -40,5 +44,11 @@ public class Crime {
 
     public void setSolved(boolean solved) {
         isSolved = solved;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Crime)) return false;
+        return ((Crime) obj).getId().equals(id);
     }
 }

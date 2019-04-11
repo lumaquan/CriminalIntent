@@ -103,7 +103,6 @@ public class CrimeFragment extends LoggingLifecycleFragment {
         return view;
     }
 
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != Activity.RESULT_OK) {
@@ -114,6 +113,12 @@ public class CrimeFragment extends LoggingLifecycleFragment {
             mCrime.setDate(date);
             dateButton.setText(mCrime.getDate().toString());
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        CrimeLab.get(getActivity()).updateCrime(mCrime);
     }
 
     @Override
