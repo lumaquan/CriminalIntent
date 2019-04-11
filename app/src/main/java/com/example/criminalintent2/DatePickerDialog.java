@@ -11,13 +11,11 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.widget.DatePicker;
 
-import com.example.criminalintent2.Lifecycle.FragmentLifecycles;
-
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-public class DatePickerDialog extends DialogFragment implements FragmentLifecycles {
+public class DatePickerDialog extends DialogFragment{
 
     public static final String DATE_EXTRA = "crime_date_extra";
 
@@ -49,13 +47,10 @@ public class DatePickerDialog extends DialogFragment implements FragmentLifecycl
                         int month = datePicker.getMonth();
                         int day = datePicker.getDayOfMonth();
                         Date date = new GregorianCalendar(year, month, day).getTime();
-                        sendResult(Activity.RESULT_OK, date);
-                    }
-                })
+                        sendResult(Activity.RESULT_OK, date); }})
                 .create();
 
         alertDialog.setCanceledOnTouchOutside(false);
-
         return alertDialog;
     }
 

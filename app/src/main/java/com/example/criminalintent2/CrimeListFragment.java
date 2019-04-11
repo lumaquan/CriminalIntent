@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.example.criminalintent2.Lifecycle.LoggingLifecycleFragment;
+import com.example.criminalintent2.data.CrimeLab;
 
 import java.util.List;
 import java.util.UUID;

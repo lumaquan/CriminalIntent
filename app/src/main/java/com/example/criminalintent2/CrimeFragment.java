@@ -19,6 +19,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 
 import com.example.criminalintent2.Lifecycle.LoggingLifecycleFragment;
+import com.example.criminalintent2.data.CrimeLab;
 
 import java.util.Date;
 import java.util.UUID;

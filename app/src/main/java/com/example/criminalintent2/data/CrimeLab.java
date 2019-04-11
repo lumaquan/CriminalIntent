@@ -1,6 +1,9 @@
-package com.example.criminalintent2;
+package com.example.criminalintent2.data;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+
+import com.example.criminalintent2.Crime;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,6 +15,8 @@ public class CrimeLab {
 
     private static CrimeLab sCrimeLab;
     private Map<UUID, Crime> mCrimes;
+    private Context mContext;
+    private SQLiteDatabase mDatabase;
 
     public static CrimeLab get(Context context) {
         if (sCrimeLab == null) {
@@ -21,6 +26,8 @@ public class CrimeLab {
     }
 
     private CrimeLab(Context context) {
+        mContext = context.getApplicationContext();
+        mDatabase = new CrimeHelper(mContext).getWritableDatabase();
         mCrimes = new HashMap<>();
     }
 
