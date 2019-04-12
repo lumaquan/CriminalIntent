@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 import com.example.criminalintent2.Lifecycle.LoggingLifecycleFragment;
 import com.example.criminalintent2.data.CrimeLab;
@@ -22,13 +23,14 @@ import com.example.criminalintent2.data.CrimeLab;
 import java.util.List;
 import java.util.UUID;
 
-public class CrimeListFragment extends LoggingLifecycleFragment implements CrimeAdapter.OnItemClickedListener {
+public class CrimeListFragment extends LoggingLifecycleFragment implements CrimeAdapter.OnItemClickedListener, CrimeLab.Callback {
 
     private static final String SAVED_SUBTITLE_VISIBLE = "subtitle";
     private RecyclerView crimeList;
     private CrimeAdapter crimeAdapter;
     private boolean mSubtitleVisible;
     private LinearLayout noCrimesContainer;
+    private ProgressBar progressBar;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,6 +49,8 @@ public class CrimeListFragment extends LoggingLifecycleFragment implements Crime
         crimeList.setAdapter(crimeAdapter);
         crimeList.addItemDecoration(new ItemDivider(getActivity()));
         noCrimesContainer = view.findViewById(R.id.no_crimes_container);
+        progressBar = view.findViewById(R.id.progress_bar);
+
         Button addCrimeButton = view.findViewById(R.id.add_crime_button);
         addCrimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,7 +73,13 @@ public class CrimeListFragment extends LoggingLifecycleFragment implements Crime
     }
 
     private void updateUI() {
-        List<Crime> crimes = CrimeLab.get(getActivity()).getCrimes();
+        showLoading(true);
+        CrimeLab.get(getActivity()).enqueue(this);
+    }
+
+    @Override
+    public void results(List<Crime> crimes) {
+        showLoading(false);
         crimeAdapter.setCrimes(crimes);
         if (crimes.size() > 0) {
             noCrimesContainer.setVisibility(View.INVISIBLE);
@@ -80,6 +90,13 @@ public class CrimeListFragment extends LoggingLifecycleFragment implements Crime
         }
         updateSubtitle();
     }
+
+    private void showLoading(boolean show) {
+        progressBar.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
+        noCrimesContainer.setVisibility(!show ? View.VISIBLE : View.INVISIBLE);
+        crimeList.setVisibility(!show ? View.VISIBLE : View.INVISIBLE);
+    }
+
 
     @Override
     public void onItemClick(UUID uuid) {
@@ -134,6 +151,7 @@ public class CrimeListFragment extends LoggingLifecycleFragment implements Crime
         super.onSaveInstanceState(outState);
         outState.putBoolean(SAVED_SUBTITLE_VISIBLE, mSubtitleVisible);
     }
+
 
 }
 

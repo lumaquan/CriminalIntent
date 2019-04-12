@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Handler;
+import android.os.Looper;
 
 import com.example.criminalintent2.Crime;
 
@@ -21,6 +23,12 @@ public class CrimeLab {
     private static CrimeLab sCrimeLab;
     private Context mContext;
     private SQLiteDatabase mDatabase;
+    private List<Crime> cachedCrimes = new ArrayList<>();
+    private boolean cacheDirty = true;
+
+    public interface Callback {
+        void results(List<Crime> crimes);
+    }
 
     public static CrimeLab get(Context context) {
         if (sCrimeLab == null) {
@@ -35,19 +43,51 @@ public class CrimeLab {
     }
 
     public List<Crime> getCrimes() {
-        List<Crime> crimes = new ArrayList<>();
+        if (cachedCrimes != null && !cacheDirty) return cachedCrimes;
+        cachedCrimes.clear();
         CrimeCursorWrapper cursor = queryCrimes(null, null);
         try {
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
-                crimes.add(cursor.getCrime());
+                cachedCrimes.add(cursor.getCrime());
                 cursor.moveToNext();
             }
         } finally {
             cursor.close();
         }
-        return crimes;
+        cacheDirty = false;
+        return cachedCrimes;
     }
+
+    public void enqueue(Callback callback) {
+        if (cachedCrimes != null && !cacheDirty) {
+            callback.results(cachedCrimes);
+            return;
+        }
+        cachedCrimes.clear();
+        Handler handler = new Handler(Looper.getMainLooper());
+        new Thread(() ->
+        {
+            CrimeCursorWrapper cursor = queryCrimes(null, null);
+            try {
+                cursor.moveToFirst();
+                while (!cursor.isAfterLast()) {
+                    cachedCrimes.add(cursor.getCrime());
+                    cursor.moveToNext();
+                }
+
+                handler.postDelayed(() -> {
+                    callback.results(cachedCrimes);
+                }, 2000);
+
+            } finally {
+                cursor.close();
+            }
+
+
+        }).start();
+    }
+
 
     public Crime getCrimeUUID(UUID id) {
         CrimeCursorWrapper cursor = queryCrimes(CrimeDBSchema.CrimeTable.Col.UUID + " = ?", new String[]{id.toString()});
@@ -64,11 +104,13 @@ public class CrimeLab {
 
     public void deleteCrime(UUID id) {
         mDatabase.delete(NAME, CrimeDBSchema.CrimeTable.Col.UUID + " = ?", new String[]{id.toString()});
+        cacheDirty = true;
     }
 
     public void addCrime(Crime c) {
         ContentValues values = getContentValues(c);
         mDatabase.insert(NAME, null, values);
+        cacheDirty = true;
     }
 
     private CrimeCursorWrapper queryCrimes(String whereClause, String[] whereArgs) {
@@ -87,8 +129,8 @@ public class CrimeLab {
         String uuidString = crime.getId().toString();
         ContentValues values = getContentValues(crime);
         mDatabase.update(NAME, values, CrimeDBSchema.CrimeTable.Col.UUID + " = ?", new String[]{uuidString});
+        cacheDirty = true;
     }
-
 
     private static ContentValues getContentValues(Crime crime) {
         ContentValues values = new ContentValues();
@@ -98,6 +140,5 @@ public class CrimeLab {
         values.put(SOLVED, crime.isSolved() ? 1 : 0);
         return values;
     }
-
 
 }
