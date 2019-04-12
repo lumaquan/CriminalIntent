@@ -3,8 +3,13 @@ package com.example.criminalintent2;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ShareCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
@@ -16,7 +21,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 
 import com.example.criminalintent2.Lifecycle.LoggingLifecycleFragment;
@@ -30,10 +34,13 @@ public class CrimeFragment extends LoggingLifecycleFragment {
     private EditText titleField;
     private CheckBox solvedCheckBox;
     private Button dateButton;
+    private Button mReportButton;
+    private Button mSuspectButton;
 
     private static final String CRIME_ID_EXTRA = "crime_id_extra";
     private static final String DIALOG_DATE = "DialogDate";
     private static final int REQUEST_DATE = 0;
+    private static final int REQUEST_CONTACT = 1;
 
     public static CrimeFragment newInstance(UUID uuid) {
         CrimeFragment crimeFragment = new CrimeFragment();
@@ -83,24 +90,36 @@ public class CrimeFragment extends LoggingLifecycleFragment {
         dateButton = view.findViewById(R.id.crime_date);
         dateButton.setText(mCrime.getDate().toString());
         dateButton.setEnabled(true);
-        dateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DatePickerDialog dialog = DatePickerDialog.newInstance(mCrime.getDate());
-                dialog.show(getFragmentManager(), DIALOG_DATE);
-                dialog.setTargetFragment(CrimeFragment.this, REQUEST_DATE);
-            }
+        dateButton.setOnClickListener(v -> {
+            DatePickerDialog dialog = DatePickerDialog.newInstance(mCrime.getDate());
+            dialog.show(getFragmentManager(), DIALOG_DATE);
+            dialog.setTargetFragment(CrimeFragment.this, REQUEST_DATE);
         });
 
         solvedCheckBox = view.findViewById(R.id.crime_solved);
         solvedCheckBox.setChecked(mCrime.isSolved());
-        solvedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mCrime.setSolved(isChecked);
-            }
+        solvedCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> mCrime.setSolved(isChecked));
+
+        mReportButton = view.findViewById(R.id.crime_report);
+        mReportButton.setOnClickListener(v -> {
+            Intent i = ShareCompat.IntentBuilder.from(getActivity())
+                    .setChooserTitle(getString(R.string.send_report))
+                    .setType("text/plain")
+                    .setSubject(getString(R.string.crime_report_subject))
+                    .setText(getCrimeReport())
+                    .createChooserIntent();
+            startActivity(i);
         });
 
+        final Intent pickContact = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+        mSuspectButton = view.findViewById(R.id.crime_suspect);
+        mSuspectButton.setOnClickListener(v -> startActivityForResult(pickContact, REQUEST_CONTACT));
+        if (mCrime.getSuspect() != null) {
+            mSuspectButton.setText(mCrime.getSuspect());
+        }
+        if (getActivity().getPackageManager().resolveActivity(pickContact, PackageManager.MATCH_DEFAULT_ONLY) == null) {
+            mSuspectButton.setEnabled(false);
+        }
         return view;
     }
 
@@ -113,8 +132,27 @@ public class CrimeFragment extends LoggingLifecycleFragment {
             Date date = (Date) data.getSerializableExtra(DatePickerDialog.DATE_EXTRA);
             mCrime.setDate(date);
             dateButton.setText(mCrime.getDate().toString());
+        } else if (requestCode == REQUEST_CONTACT && data != null) {
+            getSuspectInfo(data.getData());
         }
     }
+
+    private void getSuspectInfo(Uri uri) {
+        String[] queryFields = new String[]{ContactsContract.Contacts.DISPLAY_NAME};
+        Cursor c = getActivity().getContentResolver().query(uri, queryFields, null, null, null);
+        try {
+            if (c.getCount() == 0) {
+                return;
+            }
+            c.moveToFirst();
+            String suspect = c.getString(c.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+            mCrime.setSuspect(suspect);
+            mSuspectButton.setText(suspect);
+        } finally {
+            c.close();
+        }
+    }
+
 
     @Override
     public void onPause() {
@@ -157,8 +195,7 @@ public class CrimeFragment extends LoggingLifecycleFragment {
         } else {
             suspect = getString(R.string.crime_report_suspect, suspect);
         }
-        String report = getString(R.string.crime_report,
-                mCrime.getTitle(), dateString, solvedString, suspect);
+        String report = getString(R.string.crime_report, mCrime.getTitle(), dateString, solvedString, suspect);
         return report;
     }
 
