@@ -36,6 +36,8 @@ public class CrimeFragment extends LoggingLifecycleFragment {
     private Button dateButton;
     private Button mReportButton;
     private Button mSuspectButton;
+    private Button mSuspectCallPhoneButton;
+
 
     private static final String CRIME_ID_EXTRA = "crime_id_extra";
     private static final String DIALOG_DATE = "DialogDate";
@@ -120,6 +122,34 @@ public class CrimeFragment extends LoggingLifecycleFragment {
         if (getActivity().getPackageManager().resolveActivity(pickContact, PackageManager.MATCH_DEFAULT_ONLY) == null) {
             mSuspectButton.setEnabled(false);
         }
+
+        mSuspectCallPhoneButton = view.findViewById(R.id.crime_suspect_phone);
+        mSuspectCallPhoneButton.setOnClickListener(v -> {
+            Cursor numberCursor = null;
+            try {
+                numberCursor = getActivity().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                        null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
+                        new String[]{mCrime.getSuspectId() + ""}, null);
+
+                if (numberCursor != null && numberCursor.moveToFirst()) {
+                    String number = numberCursor.getString(numberCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                    Uri numberUri = Uri.parse("tel:" + number);
+                    Intent intent = new Intent(Intent.ACTION_DIAL);
+                    intent.setData(numberUri);
+                    startActivity(intent);
+                }
+            } finally {
+                if (numberCursor != null)
+                    numberCursor.close();
+            }
+        });
+
+        if (mCrime.getSuspect() != null) {
+            mSuspectButton.setText(mCrime.getSuspect());
+            mSuspectCallPhoneButton.setEnabled(true);
+        } else {
+            mSuspectCallPhoneButton.setEnabled(false);
+        }
         return view;
     }
 
@@ -138,7 +168,7 @@ public class CrimeFragment extends LoggingLifecycleFragment {
     }
 
     private void getSuspectInfo(Uri uri) {
-        String[] queryFields = new String[]{ContactsContract.Contacts.DISPLAY_NAME};
+        String[] queryFields = new String[]{ContactsContract.Contacts._ID, ContactsContract.Contacts.DISPLAY_NAME};
         Cursor c = getActivity().getContentResolver().query(uri, queryFields, null, null, null);
         try {
             if (c.getCount() == 0) {
@@ -146,13 +176,15 @@ public class CrimeFragment extends LoggingLifecycleFragment {
             }
             c.moveToFirst();
             String suspect = c.getString(c.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+            long suspectContactId = c.getInt(c.getColumnIndex(ContactsContract.Contacts._ID));
             mCrime.setSuspect(suspect);
+            mCrime.setSuspectId(suspectContactId);
             mSuspectButton.setText(suspect);
+            mSuspectCallPhoneButton.setEnabled(true);
         } finally {
             c.close();
         }
     }
-
 
     @Override
     public void onPause() {

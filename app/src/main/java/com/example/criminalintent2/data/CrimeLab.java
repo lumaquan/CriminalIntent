@@ -16,6 +16,7 @@ import java.util.UUID;
 import static com.example.criminalintent2.data.CrimeDBSchema.CrimeTable.Col.DATE;
 import static com.example.criminalintent2.data.CrimeDBSchema.CrimeTable.Col.SOLVED;
 import static com.example.criminalintent2.data.CrimeDBSchema.CrimeTable.Col.SUSPECT;
+import static com.example.criminalintent2.data.CrimeDBSchema.CrimeTable.Col.SUSPECT_ID;
 import static com.example.criminalintent2.data.CrimeDBSchema.CrimeTable.Col.TITLE;
 import static com.example.criminalintent2.data.CrimeDBSchema.CrimeTable.NAME;
 
@@ -79,7 +80,7 @@ public class CrimeLab {
 
                 handler.postDelayed(() -> {
                     callback.results(cachedCrimes);
-                }, 2000);
+                }, 1000);
 
             } finally {
                 cursor.close();
@@ -141,6 +142,7 @@ public class CrimeLab {
         values.put(DATE, crime.getDate().getTime());
         values.put(SOLVED, crime.isSolved() ? 1 : 0);
         values.put(SUSPECT, crime.getSuspect());
+        values.put(SUSPECT_ID, crime.getSuspectId());
         return values;
     }
 

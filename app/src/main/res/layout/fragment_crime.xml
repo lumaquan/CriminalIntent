@@ -3,17 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding = "16dp"
     android:clipToPadding="false"
     android:elevation="16dp"
     android:orientation="vertical"
+    android:padding="16dp"
     app:cardCornerRadius="8dp">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="8dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="8dp">
 
         <TextView
             style="?android:listSeparatorTextViewStyle"
@@ -48,13 +48,19 @@
             android:id="@+id/crime_suspect"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text = "@string/crime_suspect_text" />
+            android:text="@string/crime_suspect_text" />
 
         <Button
             android:id="@+id/crime_report"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/crime_report_text" />
+
+        <Button
+            android:id="@+id/crime_suspect_phone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/crime_suspect_phone_text" />
 
     </LinearLayout>
 
