@@ -15,6 +15,7 @@ import java.util.UUID;
 
 import static com.example.criminalintent2.data.CrimeDBSchema.CrimeTable.Col.DATE;
 import static com.example.criminalintent2.data.CrimeDBSchema.CrimeTable.Col.SOLVED;
+import static com.example.criminalintent2.data.CrimeDBSchema.CrimeTable.Col.SUSPECT;
 import static com.example.criminalintent2.data.CrimeDBSchema.CrimeTable.Col.TITLE;
 import static com.example.criminalintent2.data.CrimeDBSchema.CrimeTable.NAME;
 
@@ -102,14 +103,21 @@ public class CrimeLab {
         }
     }
 
-    public void deleteCrime(UUID id) {
-        mDatabase.delete(NAME, CrimeDBSchema.CrimeTable.Col.UUID + " = ?", new String[]{id.toString()});
-        cacheDirty = true;
-    }
-
     public void addCrime(Crime c) {
         ContentValues values = getContentValues(c);
         mDatabase.insert(NAME, null, values);
+        cacheDirty = true;
+    }
+
+    public void updateCrime(Crime crime) {
+        String uuidString = crime.getId().toString();
+        ContentValues values = getContentValues(crime);
+        mDatabase.update(NAME, values, CrimeDBSchema.CrimeTable.Col.UUID + " = ?", new String[]{uuidString});
+        cacheDirty = true;
+    }
+
+    public void deleteCrime(UUID id) {
+        mDatabase.delete(NAME, CrimeDBSchema.CrimeTable.Col.UUID + " = ?", new String[]{id.toString()});
         cacheDirty = true;
     }
 
@@ -125,12 +133,6 @@ public class CrimeLab {
         return new CrimeCursorWrapper(cursor);
     }
 
-    public void updateCrime(Crime crime) {
-        String uuidString = crime.getId().toString();
-        ContentValues values = getContentValues(crime);
-        mDatabase.update(NAME, values, CrimeDBSchema.CrimeTable.Col.UUID + " = ?", new String[]{uuidString});
-        cacheDirty = true;
-    }
 
     private static ContentValues getContentValues(Crime crime) {
         ContentValues values = new ContentValues();
@@ -138,6 +140,7 @@ public class CrimeLab {
         values.put(TITLE, crime.getTitle());
         values.put(DATE, crime.getDate().getTime());
         values.put(SOLVED, crime.isSolved() ? 1 : 0);
+        values.put(SUSPECT, crime.getSuspect());
         return values;
     }
 

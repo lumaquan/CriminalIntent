@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import static com.example.criminalintent2.data.CrimeDBSchema.CrimeTable.Col.DATE;
 import static com.example.criminalintent2.data.CrimeDBSchema.CrimeTable.Col.SOLVED;
+import static com.example.criminalintent2.data.CrimeDBSchema.CrimeTable.Col.SUSPECT;
 import static com.example.criminalintent2.data.CrimeDBSchema.CrimeTable.Col.TITLE;
 import static com.example.criminalintent2.data.CrimeDBSchema.CrimeTable.Col.UUID;
 import static com.example.criminalintent2.data.CrimeDBSchema.CrimeTable.NAME;
@@ -26,7 +27,8 @@ public class CrimeHelper extends SQLiteOpenHelper {
                 UUID + ", " +
                 TITLE + ", " +
                 DATE + ", " +
-                SOLVED +
+                SOLVED + ", " +
+                SUSPECT +
                 ")");
     }
 
